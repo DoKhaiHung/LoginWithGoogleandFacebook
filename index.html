@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="<Client ID>.apps.googleusercontent.com">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
+    <script src="	https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head><link rel="stylesheet" href="style.css">
+<body>
+    <div class="g-signin2 login-google" data-onsuccess="onSignIn"></div>
+    <div class="login-success">
+        <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+            <div class="card p-4">
+                <div class=" image d-flex flex-column justify-content-center align-items-center"> <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" id="photo" height="100" width="100" /></button> <span class="name mt-3">Eleanor Pena</span> <span class="idd">@eleanorpena</span>
+                    <div class="d-flex flex-row justify-content-center align-items-center gap-2"> <span class="idd1 ">Oxc4c16a645_b21a</span> <span><i class="fa fa-copy"></i></span> </div>
+                    <div class="d-flex flex-row justify-content-center align-items-center mt-3"> <span class="number">1069 <span class="follow">Followers</span></span> </div>
+                    <div class=" d-flex mt-2"> <button class="btn1 btn-dark">Edit Profile</button> </div>
+                    <div class="text mt-3"> <span>Eleanor Pena is a creator of minimalistic x bold graphics and digital artwork.<br><br> Artist/ Creative Director by Day #NFT minting@ with FND night. </span> </div>
+                    <div class="gap-3 mt-3 icons d-flex flex-row justify-content-center align-items-center"> <span><i class="fa fa-twitter"></i></span> <span><i class="fa fa-facebook-f"></i></span> <span><i class="fa fa-instagram"></i></span> <span><i class="fa fa-linkedin"></i></span> </div>
+                    <div class=" px-2 rounded mt-4 date "> <span class="join">Joined May,2021</span> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- facebook login button -->
+    <div id="fb-root"></div>
+    <div class="fb-login-button"  onlogin="checkLoginState()" data-width="200" data-size="large" data-button-type="continue_with" data-layout="default"  scope="public_profile,email" data-auto-logout-link="false" data-use-continue-as="false"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v13.0&appId=<App ID>&autoLogAppEvents=1" nonce="tbEIp8m6"></script>
+    <script>
+        //call API with google login
+        function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+            console.log(id_token)
+            fetch(`./api/login.php`,{
+			headers: {
+					'Accept': 'application/json, text/plain, */*',
+					'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			method: "POST",
+			body: `token=${id_token}&&type=google`
+		    })
+            .then(res=>res.json())
+            .then((mess)=>{
+                if(mess==1){
+                    render({name:profile.getName(),photo:profile.getImageUrl(),email:profile.getEmail()})
+
+                }
+            })
+        }
+        function render({name,photo,email}){
+            console.dir(document.querySelector("#photo"))
+           document.querySelector("#photo").src=photo;
+           document.querySelector(".name").textContent=name;
+           document.querySelector(".idd").textContent=email;
+           document.querySelector(".login-success").style.display='block';
+           document.querySelector(".login-google").style.display='none';
+           document.querySelector(".fb-login-button").style.display='none';
+
+        }
+    </script>
+ <script src="facebook.js"></script>
+</body>
+
+</html>
